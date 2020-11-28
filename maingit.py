@@ -17,7 +17,6 @@ api = tweepy.API(auth)
 # for tweet in public_tweets:
 #     print(tweet.text.encode('utf-8'))
 
-
 csvFile = open('bts_india2.csv', 'a', newline='')
 csvFile2 = open('bts_world2.csv', 'a', newline='')
 csvWriter = csv.writer(csvFile)
@@ -25,16 +24,16 @@ csvWriter2 = csv.writer(csvFile2)
 
 search_words = "bts"     
 new_search = search_words + " -filter:retweets"
-COUNT = 0
+count_country = 0
 print("Fetching...")
 substring = "India"
-count =0
-for tweet in tweepy.Cursor(api.search,q=new_search,count=100,lang="en",since_id=0, exclude='retweets', geo_enabled=True, wait_on_rate_limit=True, wait_on_rate_limit_notify=True).items():
-    if(count<100):
-        count = count + 1
+count_total =0
+for tweet in tweepy.Cursor(api.search,q=new_search,geocode="20.5937,78.9629,2933km",count=100,lang="en",since_id=0, exclude='retweets', geo_enabled=True, wait_on_rate_limit=True, wait_on_rate_limit_notify=True).items():
+    if(count_total<100):
+        count_total = count_total + 1
         print("####################################")
-        print("{} -> {}".format(count, tweet.id_str))
-        time.sleep(random.randint(2, 8))
+        print("{} -> {}".format(count_total, tweet.id_str))
+        #time.sleep(random.randint(2, 8))
         T_ID=tweet.id_str
         T_TEXT = tweet.text.encode('utf-8')
         T_DATETIME = tweet.created_at
@@ -59,15 +58,15 @@ for tweet in tweepy.Cursor(api.search,q=new_search,count=100,lang="en",since_id=
             pass
 
         if(len(tweet.entities["hashtags"])>0 and substring in tweet.user.location):
-            if(COUNT<50):
+            if(count_country<50):
                 #print(tweet)
                 #if(tweet.user.location.startswith("b''", 0, 3)==False):
-                #print(COUNT)
+                #print(count_country)
                 try:
                     print("Writing in bts_india")    
                     csvWriter.writerow([T_ID, T_DATETIME, T_TEXT, T_HASHTAGS, T_MENTIONS, T_LOCATION, T_USERNAME, T_SCREENNAME, T_FOLLOWERS, T_FRIENDS, T_STATUSES ])
-                    COUNT = COUNT + 1
-                    print("bts_india comments = ".format(COUNT))
+                    count_country = count_country + 1
+                    print("bts_india comments = ",count_country)
                
                 except:
                     pass
@@ -78,7 +77,7 @@ for tweet in tweepy.Cursor(api.search,q=new_search,count=100,lang="en",since_id=
             try:
                 print("Writing in bts_world")
                 csvWriter2.writerow([T_ID, T_DATETIME, T_TEXT, T_HASHTAGS, T_MENTIONS, T_LOCATION, T_USERNAME, T_SCREENNAME, T_FOLLOWERS, T_FRIENDS, T_STATUSES ])
-                print("bts_world comments = ", count)
+                print("bts_world comments = ", count_total)
 
             except:
                 pass
